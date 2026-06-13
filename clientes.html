@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <!-- Tailwind CSS CDN para un diseño rápido y moderno -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen">
+
+<div class="bg-gray-900 text-white p-4 rounded-lg shadow mb-6">
+
+    <div class="flex gap-8 flex-wrap items-start">
+
+        <div class="menu-group">
+            <a href="index.html"
+               class="font-bold text-yellow-400 no-underline">
+                🏠 Inicio
+            </a>
+        </div>
+
+        <!-- CONFIGURACIÓN -->
+        <div class="menu-group" id="menuConfiguracion">
+
+            <div class="cursor-pointer font-bold text-yellow-400"
+                 onclick="toggleGroup('configuracionMenu')">
+
+                 ⚙ Configuración
+
+            </div>
+
+            <div id="configuracionMenu"
+                 class="mt-2 space-y-1 hidden">
+
+                <a href="usuarios.html"
+                   class="block hover:text-blue-300">
+
+                    Usuarios
+
+                </a>
+
+                <a href="coberturas.html"
+                   class="block hover:text-blue-300">
+
+                    Coberturas
+
+                </a>
+
+                <a href="planes.html"
+                   class="block hover:text-blue-300">
+
+                    Planes
+
+                </a>
+
+                <a href="plan_coberturas.html"
+                   class="block hover:text-blue-300">
+
+                    Plan Coberturas
+
+                </a>
+
+            </div>
+        </div>
+
+        <div class="menu-group" id="menuClientes">
+
+            <a href="clientes.html"
+               class="font-bold text-yellow-400 no-underline">
+
+                📋 Clientes
+
+            </a>
+
+        </div>
+
+        <div class="menu-group" id="menuCotizaciones">
+
+            <a href="cotizaciones.html"
+               class="font-bold text-yellow-400 no-underline">
+
+                📋 Cotizaciones
+
+            </a>
+
+        </div>
+
+        <div class="menu-group" id="menuPolizas">
+
+            <a href="polizas.html"
+               class="font-bold text-yellow-400 no-underline">
+
+                📋 Pólizas
+
+            </a>
+
+        </div>
+
+        <div class="menu-group" id="menuSiniestros">
+
+            <a href="siniestros.html"
+               class="font-bold text-yellow-400 no-underline">
+
+                📋 Siniestros
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+    <div class="max-w-6xl mx-auto space-y-6 p-6">
+        
+        <!-- ENCABEZADO -->
+        <header class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-800">Control de Clientes</h1>
+            <p class="text-gray-500 text-sm">Crea, edita y elimina registros conectados a tu API de Laravel</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
+                <h2 id="form-title" class="text-lg font-semibold text-gray-700 mb-4">Registrar Nuevo Cliente</h2>
+                
+                <form id="cliente-form" class="space-y-4">
+
+                    <input type="hidden" id="id_cliente">
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nombre *</label>
+                        <input type="text" id="nombre" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Apellido *</label>
+                        <input type="text" id="apellido" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Correo Electrónico *</label>
+                        <input type="email" id="email" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Teléfono</label>
+                        <input type="text" id="telefono" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm" placeholder="Opcional">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Fecha de Nacimiento *</label>
+                        <input type="date" id="fecha_nacimiento" required class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">País *</label>
+                        <!-- 🌟 CAMBIO CLAVE: Menú desplegable dinámico -->
+                        <select id="id_pais" required class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 text-sm">
+                            <option value="">Cargando países...</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2 flex gap-2">
+                        <button type="submit" id="submit-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded text-sm transition shadow-sm cursor-pointer">
+                            Guardar Cliente
+                        </button>
+                        <button type="button" id="cancel-btn" class="hidden bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded text-sm transition shadow-sm cursor-pointer">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TABLA DE LISTADO -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 lg:col-span-2 overflow-x-auto">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Listado de Clientes Activos</h2>
+                
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-200 bg-gray-50 text-gray-600 text-xs font-bold uppercase">
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Nombre Completo</th>
+                            <th class="p-3">Email / Teléfono</th>
+                            <th class="p-3">País</th>
+                            <th class="p-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientes-tbody" class="text-sm text-gray-700 divide-y divide-gray-100">
+                        <tr>
+                            <td colspan="5" class="p-4 text-center text-gray-400">Cargando datos del servidor...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+
+   
+    // OBTENER ROL
+   // const idRol = parseInt(sessionStorage.getItem('idRol'));
+
+    /*
+        1 = Todo
+        2 = Solo Configuración
+        3 = Solo Gestión SIN Siniestros
+        4 = Solo Siniestros
+    */
+
+    // ROL 2
+    if (idRol === 2) {
+
+        document.getElementById('menuClientes').style.display = 'none';
+        document.getElementById('menuPolizas').style.display = 'none';
+        document.getElementById('menuCotizaciones').style.display = 'none';
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 3
+    else if (idRol === 3) {
+
+        // Oculta configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Oculta siniestros
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 4
+    else if (idRol === 4) {
+
+        // Oculta configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Oculta clientes
+        document.getElementById('menuClientes').style.display = 'none';
+
+        // Oculta pólizas
+        document.getElementById('menuPolizas').style.display = 'none';
+
+        // Oculta cotizaciones
+        document.getElementById('menuCotizaciones').style.display = 'none';
+
+    }
+
+</script>
+    
+<script>
+     // MENÚ DESPLEGABLE
+    // function toggleGroup(id) {
+
+    //     const menu = document.getElementById(id);
+
+    //     if (menu.classList.contains('d-none')) {
+
+    //         menu.classList.remove('d-none');
+
+    //     } else {
+
+    //         menu.classList.add('d-none');
+
+    //     }
+    // }
+
+    // OBTENER ROL
+    const idRol = parseInt(sessionStorage.getItem('idRol'));
+
+    /*
+        1 = Todo
+        2 = Solo Configuración
+        3 = Solo Gestión SIN Siniestros
+        4 = Solo Siniestros
+    */
+
+    // ROL 2
+    if (idRol === 2) {
+
+        
+    document.getElementById('menuClientes').style.display = 'none';
+    document.getElementById('menuPolizas').style.display = 'none';
+    document.getElementById('menuCotizaciones').style.display = 'none';
+    document.getElementById('menuSiniestros').style.display = 'none';
+    
+
+    }
+
+    // ROL 3
+    else if (idRol === 3) {
+
+        // Ocultar configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Ocultar SOLO siniestros
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 4
+else if (idRol === 4) {
+
+    // Ocultar configuración
+    document.getElementById('menuConfiguracion').style.display = 'none';
+    document.getElementById('menuClientes').style.display = 'none';
+    document.getElementById('menuPolizas').style.display = 'none';
+    document.getElementById('menuCotizaciones').style.display = 'none';
+    
+    
+}
+
+</script>
+    <!-- LÓGICA DE JAVASCRIPT CON FETCH -->
+    <script>
+        const API_CLIENTES_URL = 'http://127.0.0.1:8000/api/clientes';
+        const API_PAISES_URL   = 'http://127.0.0.1:8000/api/paises'; 
+const token = sessionStorage.getItem('access_token');
+
+if (!token) {
+    window.location.href = 'login.html';
+}
+
+const HEADERS = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${token}`
+};
+        // Elementos de la interfaz
+        const form = document.getElementById('cliente-form');
+        const tbody = document.getElementById('clientes-tbody');
+        const idPaisSelect = document.getElementById('id_pais');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const formTitle = document.getElementById('form-title');
+
+        // Variables globales de memoria
+        let listaClientes = [];
+        let isEditing = false;
+
+        // 1. CARGAR PAÍSES EN EL SELECT (GET) con anti-caché
+        async function fetchPaises() {
+            try {
+                const response = await fetch(
+    `${API_PAISES_URL}?_=${new Date().getTime()}`,
+    { headers: HEADERS }
+);
+
+                if (!response.ok) throw new Error('Error al obtener países');
+                
+                const paises = await response.json();
+                idPaisSelect.innerHTML = '<option value="">Seleccione un país...</option>';
+                
+                paises.forEach(pais => {
+                    idPaisSelect.innerHTML += `<option value="${pais.id_pais}">${pais.nombre_pais}</option>`;
+                });
+            } catch (error) {
+                console.error(error);
+                idPaisSelect.innerHTML = '<option value="">Error al cargar países</option>';
+            }
+        }
+
+        // 2. OBTENER Y LISTAR CLIENTES (GET) con anti-caché
+        async function fetchClientes() {
+            try {
+                const response = await fetch(
+    `${API_CLIENTES_URL}?_=${new Date().getTime()}`,
+    { headers: HEADERS }
+);
+                if (!response.ok) throw new Error('Error al conectar con la API de clientes');
+                
+                listaClientes = await response.json();
+                tbody.innerHTML = ''; 
+
+                if (listaClientes.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No hay clientes registrados actualmente.</td></tr>`;
+                    return;
+                }
+
+                listaClientes.forEach(cliente => {
+                    const paisNombre = cliente.pais ? cliente.pais.nombre_pais : `ID: ${cliente.id_pais}`;
+                    
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="p-3 font-semibold text-gray-500">${cliente.id_cliente}</td>
+                            <td class="p-3 font-medium text-gray-900">${cliente.nombre} ${cliente.apellido}</td>
+                            <td class="p-3 text-xs text-gray-600">
+                                <div>${cliente.email}</div>
+                                <div class="text-gray-400">${cliente.telefono || 'Sin teléfono'}</div>
+                            </td>
+                            <td class="p-3"><span class="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded font-medium">${paisNombre}</span></td>
+                            <td class="p-3 text-center">
+                                <div class="flex justify-center gap-2">
+                                    <button type="button" onclick="prepareEdit(${cliente.id_cliente})" class="text-blue-600 hover:text-blue-800 font-medium text-xs bg-blue-50 px-2 py-1 rounded transition cursor-pointer">Editar</button>
+                                    <button type="button" onclick="deleteCliente(${cliente.id_cliente})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 px-2 py-1 rounded transition cursor-pointer">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500 font-medium">Error al cargar clientes. Revisa el backend.</td></tr>`;
+            }
+        }
+
+        // 3. GUARDAR O ACTUALIZAR REGISTRO (POST / PUT)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+
+            const clienteData = {
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                email: document.getElementById('email').value,
+                telefono: document.getElementById('telefono').value || null,
+                fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+                id_pais: parseInt(idPaisSelect.value)
+            };
+
+            const idCliente = document.getElementById('id_cliente').value;
+            let url = API_CLIENTES_URL;
+            let method = 'POST';
+
+            if (isEditing) {
+                url = `${API_CLIENTES_URL}/${idCliente}`;
+                method = 'PUT';
+            }
+
+            try {
+               const response = await fetch(url, {
+    method: method,
+    headers: HEADERS,
+    body: JSON.stringify(clienteData)
+});
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(isEditing ? '¡Cliente actualizado con éxito!' : '¡Cliente registrado con éxito!');
+                    resetForm();
+                    fetchClientes(); 
+                } else {
+                    alert('Error: ' + (data.message || JSON.stringify(data.errors)));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('No se pudo procesar la solicitud.');
+            }
+        });
+
+        // 4. CARGAR DATOS AL FORMULARIO PARA EDITAR
+        function prepareEdit(id) {
+            const cliente = listaClientes.find(c => c.id_cliente === id);
+            if (!cliente) return;
+
+            isEditing = true;
+            formTitle.innerText = "Modificar Datos del Cliente";
+            submitBtn.innerText = "Actualizar Cliente";
+            submitBtn.classList.replace('bg-blue-600', 'bg-emerald-600');
+            submitBtn.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+            cancelBtn.classList.remove('hidden');
+
+            document.getElementById('id_cliente').value = cliente.id_cliente;
+            document.getElementById('nombre').value = cliente.nombre;
+            document.getElementById('apellido').value = cliente.apellido;
+            document.getElementById('email').value = cliente.email;
+            document.getElementById('telefono').value = cliente.telefono || '';
+            document.getElementById('fecha_nacimiento').value = cliente.fecha_nacimiento;
+            idPaisSelect.value = cliente.id_pais;
+        }
+
+        // 5. ELIMINAR CLIENTE (DELETE)
+        async function deleteCliente(id) {
+            if (!confirm('¿Estás completamente seguro de eliminar este cliente?')) return;
+
+            try {
+                const response = await fetch(`${API_CLIENTES_URL}/${id}`, {
+    method: 'DELETE',
+    headers: HEADERS
+});
+
+                if (response.ok) {
+                    alert('Cliente eliminado correctamente.');
+                    if (document.getElementById('id_cliente').value == id) resetForm();
+                    fetchClientes();
+                } else {
+                    alert('No se pudo eliminar el registro.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Ocurrió un error en la comunicación.');
+            }
+        }
+
+        // Limpieza del formulario
+        function resetForm() {
+            isEditing = false;
+            form.reset();
+            document.getElementById('id_cliente').value = '';
+            formTitle.innerText = "Registrar Nuevo Cliente";
+            submitBtn.innerText = "Guardar Cliente";
+            submitBtn.classList.replace('bg-emerald-600', 'bg-blue-600');
+            submitBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
+            cancelBtn.classList.add('hidden');
+        }
+
+        cancelBtn.addEventListener('click', resetForm);
+
+        // Inicialización al cargar la ventana
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchPaises();
+            await fetchClientes();
+        });
+
+        // MENÚ DESPLEGABLE
+
+    </script>
+</body>
+</html>
