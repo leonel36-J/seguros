@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Cotizaciones</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    
+
+    <!-- MENÚ SUPERIOR -->
+<div class="bg-dark text-white p-3 shadow mb-4">
+    <div class="container d-flex gap-5 flex-wrap">
+
+        <!-- INICIO -->
+        <div class="menu-group">
+            <a href="index.html"
+               class="fw-bold text-warning text-decoration-none">
+                🏠 Inicio
+            </a>
+        </div>
+
+        <!-- CONFIGURACIÓN -->
+        <div class="menu-group" id="menuConfiguracion">
+
+            <div class="fw-bold text-warning"
+                 style="cursor:pointer"
+                 onclick="toggleGroup('configuracionMenu')">
+                ⚙ Configuración
+            </div>
+
+            <div id="configuracionMenu" class="mt-2 d-none">
+
+                <a href="usuarios.html"
+                   class="d-block text-white text-decoration-none mb-1">
+                    Usuarios
+                </a>
+
+                <a href="coberturas.html"
+                   class="d-block text-white text-decoration-none mb-1">
+                    Coberturas
+                </a>
+
+                <a href="planes.html"
+                   class="d-block text-white text-decoration-none mb-1">
+                    Planes
+                </a>
+
+                <a href="plan_coberturas.html"
+                   class="d-block text-white text-decoration-none mb-1">
+                    Plan Coberturas
+                </a>
+
+            </div>
+        </div>
+
+        <!-- CLIENTES -->
+        <div class="menu-group" id="menuClientes">
+            <a href="clientes.html"
+               class="fw-bold text-warning text-decoration-none">
+                📋 Clientes
+            </a>
+        </div>
+
+        <!-- COTIZACIONES -->
+        <div class="menu-group" id="menuCotizaciones">
+            <a href="cotizaciones.html"
+               class="fw-bold text-warning text-decoration-none">
+                📋 Cotizaciones
+            </a>
+        </div>
+
+        <!-- POLIZAS -->
+        <div class="menu-group" id="menuPolizas">
+            <a href="polizas.html"
+               class="fw-bold text-warning text-decoration-none">
+                📋 Pólizas
+            </a>
+        </div>
+
+        <!-- SINIESTROS -->
+        <div class="menu-group" id="menuSiniestros">
+            <a href="siniestros.html"
+               class="fw-bold text-warning text-decoration-none">
+                📋 Siniestros
+            </a>
+        </div>
+
+    </div>
+</div>
+
+    <!-- CONTENIDO -->
+    <div class="container mt-4">
+
+        <h2>Gestión de Cotizaciones</h2>
+
+        <div class="card mb-4 p-3">
+
+            <input type="hidden" id="id_cotizacion">
+
+            <!-- Fila 1 -->
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-12">
+
+                    <label class="form-label">Cliente</label>
+
+                    <input type="text"
+                           id="buscadorCliente"
+                           class="form-control mb-1"
+                           placeholder="Buscar cliente...">
+
+                    <select id="id_cliente" class="form-select"></select>
+
+                </div>
+
+            </div>
+
+            <!-- Fila 2 -->
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">Plan</label>
+
+                    <select id="id_plan" class="form-select"></select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">Origen</label>
+
+                    <select id="id_ciudad_origen" class="form-select"></select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label">Destino</label>
+
+                    <select id="id_ciudad_destino" class="form-select"></select>
+
+                </div>
+
+            </div>
+
+            <!-- Fila 3 -->
+            <div class="row g-3">
+
+                <div class="col-md-3">
+
+                    <label class="form-label">Fecha de Viaje</label>
+
+                    <input type="date"
+                           id="fecha_inicio"
+                           class="form-control">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <label class="form-label">Fecha de Retorno</label>
+
+                    <input type="date"
+                           id="fecha_fin"
+                           class="form-control">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <label class="form-label">Precio Total</label>
+
+                    <input type="number"
+                           id="precio_total"
+                           class="form-control"
+                           placeholder="0.00">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <label class="form-label">Estado</label>
+
+                    <select id="estado" class="form-select">
+
+                        <option value="pendiente">
+                            Pendiente
+                        </option>
+
+                        <option value="aprobada">
+                            Aprobada
+                        </option>
+
+                        <option value="rechazada">
+                            Rechazada
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button onclick="guardarCotizacion()"
+                            class="btn btn-primary w-100">
+
+                        Guardar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <table class="table table-striped table-bordered bg-white">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>Cliente</th>
+                    <th>Plan</th>
+                    <th>Destino</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaCotizaciones"></tbody>
+
+        </table>
+
+    </div>
+<script>
+
+    // MENÚ DESPLEGABLE
+    function toggleGroup(id) {
+
+        const menu = document.getElementById(id);
+
+        if (menu.classList.contains('d-none')) {
+
+            menu.classList.remove('d-none');
+
+        } else {
+
+            menu.classList.add('d-none');
+
+        }
+    }
+
+    // OBTENER ROL
+    const idRol = parseInt(sessionStorage.getItem('idRol'));
+
+    /*
+        1 = Todo
+        2 = Solo Configuración
+        3 = Solo Gestión SIN Siniestros
+        4 = Solo Siniestros
+    */
+
+    // ROL 2
+    if (idRol === 2) {
+
+        document.getElementById('menuClientes').style.display = 'none';
+        document.getElementById('menuPolizas').style.display = 'none';
+        document.getElementById('menuCotizaciones').style.display = 'none';
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 3
+    else if (idRol === 3) {
+
+        // Ocultar configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Ocultar SOLO siniestros
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 4
+    else if (idRol === 4) {
+
+        // Ocultar configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Ocultar clientes
+        document.getElementById('menuClientes').style.display = 'none';
+
+        // Ocultar pólizas
+        document.getElementById('menuPolizas').style.display = 'none';
+
+        // Ocultar cotizaciones
+        document.getElementById('menuCotizaciones').style.display = 'none';
+
+    }
+
+</script>
+    <script>
+
+        // MENÚ DESPLEGABLE
+        function toggleGroup(id) {
+
+            const menu = document.getElementById(id);
+
+            if (menu.classList.contains('d-none')) {
+
+                menu.classList.remove('d-none');
+
+            } else {
+
+                menu.classList.add('d-none');
+            }
+        }
+
+        const API_BASE = 'http://127.0.0.1:8000/api';
+
+        let listaClientesOriginal = [];
+
+        const token = sessionStorage.getItem('access_token');
+
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        const HEADERS = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
+        async function cargarDatos() {
+
+            const [clientes, planes, ciudades, cotizaciones] = await Promise.all([
+
+                fetch(`${API_BASE}/clientes`, {
+                    headers: HEADERS
+                }).then(r => r.json()),
+
+                fetch(`${API_BASE}/planes`, {
+                    headers: HEADERS
+                }).then(r => r.json()),
+
+                fetch(`${API_BASE}/ciudades`, {
+                    headers: HEADERS
+                }).then(r => r.json()),
+
+                fetch(`${API_BASE}/cotizaciones`, {
+                    headers: HEADERS
+                }).then(r => r.json())
+
+            ]);
+
+            listaClientesOriginal = clientes;
+
+            renderizarClientes(clientes);
+
+            document.getElementById('id_plan').innerHTML =
+                planes.map(p => `
+                    <option value="${p.id_plan}">
+                        ${p.nombre}
+                    </option>
+                `).join('');
+
+            document.getElementById('id_ciudad_origen').innerHTML =
+                ciudades.map(c => `
+                    <option value="${c.id_ciudad}">
+                        ${c.nombre_ciudad}
+                    </option>
+                `).join('');
+
+            document.getElementById('id_ciudad_destino').innerHTML =
+                ciudades.map(c => `
+                    <option value="${c.id_ciudad}">
+                        ${c.nombre_ciudad}
+                    </option>
+                `).join('');
+
+            document.getElementById('tablaCotizaciones').innerHTML =
+                cotizaciones.map(ct => `
+
+                    <tr>
+
+                        <td>
+                            ${ct.cliente?.nombre || ''}
+                            ${ct.cliente?.apellido || ''}
+                        </td>
+
+                        <td>
+                            ${ct.plan?.nombre || ''}
+                        </td>
+
+                        <td>
+                            ${ct.ciudad_destino?.nombre_ciudad || ''}
+                        </td>
+
+                        <td>
+                            ${ct.precio_total}
+                        </td>
+
+                        <td>
+                            ${ct.estado}
+                        </td>
+
+                        <td>
+
+                            <button
+                                onclick="editarCotizacion(${ct.id_cotizacion})"
+                                class="btn btn-warning btn-sm">
+
+                                Editar
+
+                            </button>
+
+                            <button
+                                onclick="eliminarCotizacion(${ct.id_cotizacion})"
+                                class="btn btn-danger btn-sm">
+
+                                Eliminar
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `).join('');
+        }
+
+        function renderizarClientes(clientes) {
+
+            const select = document.getElementById('id_cliente');
+
+            select.innerHTML = clientes.map(c => `
+                <option value="${c.id_cliente}">
+                    ${c.nombre} ${c.apellido}
+                </option>
+            `).join('');
+        }
+
+        // EDITAR
+        async function editarCotizacion(id) {
+
+            const res = await fetch(
+                `${API_BASE}/cotizaciones/${id}`,
+                {
+                    headers: HEADERS
+                }
+            );
+
+            const ct = await res.json();
+
+            document.getElementById('id_cotizacion').value =
+                ct.id_cotizacion;
+
+            document.getElementById('id_cliente').value =
+                ct.id_cliente;
+
+            document.getElementById('id_plan').value =
+                ct.id_plan;
+
+            document.getElementById('id_ciudad_origen').value =
+                ct.id_ciudad_origen;
+
+            document.getElementById('id_ciudad_destino').value =
+                ct.id_ciudad_destino;
+
+            document.getElementById('fecha_inicio').value =
+                ct.fecha_inicio;
+
+            document.getElementById('fecha_fin').value =
+                ct.fecha_fin;
+
+            document.getElementById('precio_total').value =
+                ct.precio_total;
+
+            document.getElementById('estado').value =
+                ct.estado;
+        }
+
+        // ELIMINAR
+        async function eliminarCotizacion(id) {
+
+            if (confirm('¿Seguro que deseas eliminar esta cotización?')) {
+
+                await fetch(`${API_BASE}/cotizaciones/${id}`, {
+
+                    method: 'DELETE',
+
+                    headers: HEADERS
+                });
+
+                cargarDatos();
+            }
+        }
+
+        // GUARDAR
+        async function guardarCotizacion() {
+
+            const id = document.getElementById('id_cotizacion').value;
+
+            const data = {
+
+                id_cliente:
+                    document.getElementById('id_cliente').value,
+
+                id_plan:
+                    document.getElementById('id_plan').value,
+
+                id_ciudad_origen:
+                    document.getElementById('id_ciudad_origen').value,
+
+                id_ciudad_destino:
+                    document.getElementById('id_ciudad_destino').value,
+
+                fecha_inicio:
+                    document.getElementById('fecha_inicio').value,
+
+                fecha_fin:
+                    document.getElementById('fecha_fin').value,
+
+                precio_total:
+                    document.getElementById('precio_total').value,
+
+                estado:
+                    document.getElementById('estado').value
+            };
+
+            const url = id
+                ? `${API_BASE}/cotizaciones/${id}`
+                : `${API_BASE}/cotizaciones`;
+
+            await fetch(url, {
+
+                method: id ? 'PUT' : 'POST',
+
+                headers: HEADERS,
+
+                body: JSON.stringify(data)
+            });
+
+            document.getElementById('id_cotizacion').value = '';
+
+            cargarDatos();
+        }
+
+        // BUSCADOR CLIENTES
+        document.getElementById('buscadorCliente')
+            .addEventListener('input', function (e) {
+
+                const busqueda =
+                    e.target.value.toLowerCase();
+
+                const filtrados =
+                    listaClientesOriginal.filter(c =>
+
+                        `${c.nombre} ${c.apellido}`
+                        .toLowerCase()
+                        .includes(busqueda)
+                    );
+
+                renderizarClientes(filtrados);
+            });
+
+        // INICIAR
+        cargarDatos();
+
+    </script>
+
+</body>
+</html>
