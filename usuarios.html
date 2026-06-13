@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+  <!-- MENÚ SUPERIOR -->
+<div class="bg-dark text-white p-3 shadow mb-4">
+    <div class="container d-flex gap-5 flex-wrap">
+
+        <!-- INICIO -->
+        <div class="menu-group">
+            <a href="index.html"
+               class="fw-bold text-warning text-decoration-none">
+
+                🏠 Inicio
+
+            </a>
+        </div>
+
+        <!-- CONFIGURACIÓN -->
+        <div class="menu-group" id="menuConfiguracion">
+
+            <div class="fw-bold text-warning"
+                 style="cursor:pointer"
+                 onclick="toggleGroup('configuracionMenu')">
+
+                ⚙ Configuración
+
+            </div>
+
+            <div id="configuracionMenu" class="mt-2 d-none">
+
+                <a href="usuarios.html"
+                   class="d-block text-white text-decoration-none mb-1">
+
+                    Usuarios
+
+                </a>
+
+                <a href="coberturas.html"
+                   class="d-block text-white text-decoration-none mb-1">
+
+                    Coberturas
+
+                </a>
+
+                <a href="planes.html"
+                   class="d-block text-white text-decoration-none mb-1">
+
+                    Planes
+
+                </a>
+
+                <a href="plan_coberturas.html"
+                   class="d-block text-white text-decoration-none mb-1">
+
+                    Plan Coberturas
+
+                </a>
+
+            </div>
+        </div>
+        
+        <div class="menu-group" id="menuClientes">
+            <a href="clientes.html"
+               class="fw-bold text-warning text-decoration-none">
+
+                📋 Clientes
+
+            </a>
+        </div>
+
+        <div class="menu-group" id="menuCotizaciones">
+            <a href="cotizaciones.html"
+               class="fw-bold text-warning text-decoration-none">
+
+                📋 Cotizaciones
+
+            </a>
+        </div>
+         <div class="menu-group" id="menuPolizas">
+            <a href="polizas.html"
+               class="fw-bold text-warning text-decoration-none">
+
+                📋 Polizas
+
+            </a>
+        </div>
+
+        <div class="menu-group" id="menuSiniestros">
+            <a href="siniestros.html"
+               class="fw-bold text-warning text-decoration-none">
+
+                📋 Siniestros
+
+            </a>
+        </div>
+
+
+        
+
+    </div>
+</div>
+    <h2>Gestión de Usuarios</h2>
+
+    <!-- Formulario -->
+    <div class="card p-3 mb-4">
+        <h4 id="formTitle">Nuevo Usuario</h4>
+        <div class="row g-3">
+            <input type="hidden" id="usuario_id">
+            <div class="col-md-3"><input type="text" id="nombre" class="form-control" placeholder="Nombre"></div>
+            <div class="col-md-3"><input type="email" id="email" class="form-control" placeholder="Email"></div>
+            <div class="col-md-2"><input type="password" id="password" class="form-control" placeholder="Password"></div>
+            
+            <!-- Selector de Rol amigable -->
+            <div class="col-md-2">
+                <select id="id_rol" class="form-select">
+                    <option value="1">Administrador</option>
+                    <option value="2">Configuracion</option>
+                    <option value="3">Ejecutivo</option>
+                    <option value="4">Siniestro</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <button onclick="guardarUsuario()" class="btn btn-success w-100">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaUsuarios"></tbody>
+    </table>
+<script>
+     // MENÚ DESPLEGABLE
+    function toggleGroup(id) {
+
+        const menu = document.getElementById(id);
+
+        if (menu.classList.contains('d-none')) {
+
+            menu.classList.remove('d-none');
+
+        } else {
+
+            menu.classList.add('d-none');
+
+        }
+    }
+
+    // OBTENER ROL
+    const idRol = parseInt(sessionStorage.getItem('idRol'));
+
+    /*
+        1 = Todo
+        2 = Solo Configuración
+        3 = Solo Gestión SIN Siniestros
+        4 = Solo Siniestros
+    */
+
+    // ROL 2
+    if (idRol === 2) {
+
+        
+    document.getElementById('menuClientes').style.display = 'none';
+    document.getElementById('menuPolizas').style.display = 'none';
+    document.getElementById('menuCotizaciones').style.display = 'none';
+    document.getElementById('menuSiniestros').style.display = 'none';
+    
+
+    }
+
+    // ROL 3
+    else if (idRol === 3) {
+
+        // Ocultar configuración
+        document.getElementById('menuConfiguracion').style.display = 'none';
+
+        // Ocultar SOLO siniestros
+        document.getElementById('menuSiniestros').style.display = 'none';
+
+    }
+
+    // ROL 4
+else if (idRol === 4) {
+
+    // Ocultar configuración
+    document.getElementById('menuConfiguracion').style.display = 'none';
+    document.getElementById('menuClientes').style.display = 'none';
+    document.getElementById('menuPolizas').style.display = 'none';
+    document.getElementById('menuCotizaciones').style.display = 'none';
+    
+    
+}
+
+</script>
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/usuarios';
+        const token = sessionStorage.getItem('access_token');
+
+        async function cargarUsuarios() {
+            const res = await fetch(API_URL, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            const tbody = document.getElementById('tablaUsuarios');
+            tbody.innerHTML = data.map(u => `
+                <tr>
+                    <td>${u.id_usuario}</td>
+                    <td>${u.nombre}</td>
+                    <td>${u.email}</td>
+                    <td>${u.rol ? u.rol.rol : 'N/A'}</td>
+                    <td>
+                        <button onclick="editar(${u.id_usuario}, '${u.nombre}', '${u.email}', ${u.id_rol})" class="btn btn-sm btn-primary">Editar</button>
+                        <button onclick="eliminar(${u.id_usuario})" class="btn btn-sm btn-danger">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function guardarUsuario() {
+            const id = document.getElementById('usuario_id').value;
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                // El valor seleccionado en el <select> ya es el número (1, 2, 3 o 4)
+                id_rol: parseInt(document.getElementById('id_rol').value),
+                activo: 1
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            await fetch(url, {
+                method: method,
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            limpiarForm();
+            cargarUsuarios();
+        }
+
+        async function eliminar(id) {
+            if (confirm('¿Eliminar usuario?')) {
+                await fetch(`${API_URL}/${id}`, { 
+                    method: 'DELETE', 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                });
+                cargarUsuarios();
+            }
+        }
+
+        function editar(id, nombre, email, id_rol) {
+            document.getElementById('usuario_id').value = id;
+            document.getElementById('nombre').value = nombre;
+            document.getElementById('email').value = email;
+            document.getElementById('id_rol').value = id_rol; // Selecciona el ID correcto
+            document.getElementById('formTitle').innerText = "Editar Usuario";
+        }
+
+        function limpiarForm() {
+            document.getElementById('usuario_id').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('id_rol').value = '1';
+            document.getElementById('formTitle').innerText = "Nuevo Usuario";
+        }
+
+        cargarUsuarios();
+    </script>
+</body>
+</html>
