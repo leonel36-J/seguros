@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta y Registro de Siniestros</title>
+
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    
+    <div class="bg-dark text-white p-3 shadow mb-4">
+        <div class="container d-flex gap-5 flex-wrap">
+
+        <div class="menu-group">
+            <a href="index.html"
+               class="fw-bold text-warning text-decoration-none">
+                🏠 Inicio
+            </a>
+        </div>
+            
+            <div class="menu-group">
+                <div class="fw-bold text-warning"
+                     style="cursor:pointer"
+                     onclick="toggleGroup('configuracionMenu')">
+                    ⚙ Configuración
+                </div>
+
+                <div id="configuracionMenu" class="mt-2 d-none">
+                    <a href="usuarios.html" class="d-block text-white text-decoration-none mb-1">Usuarios</a>
+                    <a href="coberturas.html" class="d-block text-white text-decoration-none mb-1">Coberturas</a>
+                    <a href="planes.html" class="d-block text-white text-decoration-none mb-1">Planes</a>
+                    <a href="plan_coberturas.html" class="d-block text-white text-decoration-none mb-1">Plan Coberturas</a>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="fw-bold text-warning"
+                     style="cursor:pointer"
+                     onclick="toggleGroup('gestionMenu')">
+                    📋 Gestión
+                </div>
+
+                <div id="gestionMenu" class="mt-2 d-none">
+                    <a href="clientes.html" class="d-block text-white text-decoration-none mb-1">Clientes</a>
+                    <a href="cotizaciones.html" class="d-block text-white text-decoration-none mb-1">Cotizaciones</a>
+                    <a href="polizas.html" class="d-block text-white text-decoration-none mb-1">Pólizas</a>
+                    <a href="siniestros.html" class="d-block text-white text-decoration-none mb-1">Siniestros</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    <div class="container mt-4">
+
+        <h2>Consulta de Siniestros</h2>
+
+        <!-- Buscador -->
+        <div class="card mb-4 p-3">
+
+            <div class="row g-3">
+
+                <div class="col-md-10">
+
+                    <input type="text"
+                           id="nro_poliza_buscar"
+                           class="form-control"
+                           placeholder="Ingrese Número de Póliza (Ej: POL-2024-007)">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button onclick="buscarSiniestro()"
+                            class="btn btn-primary w-100">
+
+                        Buscar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Info Cliente -->
+        <div id="infoCliente"
+             class="mb-4"
+             style="display: none;">
+
+            <div class="alert alert-info">
+
+                <strong>Cliente:</strong>
+                <span id="txtNombre"></span>
+                <span id="txtApellido"></span>
+
+                |
+
+                <strong>Póliza:</strong>
+                <span id="txtPoliza"></span>
+
+            </div>
+
+        </div>
+
+        <!-- Tabla Coberturas -->
+        <table class="table table-striped table-bordered bg-white">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>ID Cobertura</th>
+                    <th>Nombre de Cobertura</th>
+                    <th>Acción</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaCoberturas"></tbody>
+
+        </table>
+
+        <!-- Registro -->
+        <div id="divRegistro"
+             class="card mt-4 p-3"
+             style="display: none;">
+
+            <h4>Registrar Siniestro</h4>
+
+            <div class="row g-3">
+
+                <input type="hidden" id="reg_id_poliza">
+
+                <input type="hidden" id="reg_numero_poliza">
+
+                <input type="hidden" id="reg_id_cobertura">
+
+                <input type="hidden" id="reg_nombre_cobertura">
+
+                <div class="col-md-4">
+
+                    <label>Fecha Siniestro</label>
+
+                    <input type="date"
+                           id="reg_fecha"
+                           class="form-control">
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label>Monto Reclamado</label>
+
+                    <input type="number"
+                           step="0.01"
+                           id="reg_monto"
+                           class="form-control"
+                           placeholder="0.00">
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <label>Descripción</label>
+
+                    <textarea id="reg_descripcion"
+                              class="form-control">
+                    </textarea>
+
+                </div>
+
+                <div class="col-md-12">
+
+                    <button onclick="enviarSiniestro()"
+                            class="btn btn-success">
+
+                        Confirmar Registro
+
+                    </button>
+
+                    <button onclick="cancelarRegistro()"
+                            class="btn btn-secondary">
+
+                        Cancelar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- REPORTE -->
+        <div id="divReporte"
+             class="mt-5"
+             style="display: none;">
+
+            <h4>Reporte de Siniestros Asociados</h4>
+
+            <table class="table table-bordered bg-white">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaReporte"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // MENÚ DESPLEGABLE
+        function toggleGroup(id) {
+
+            const menu = document.getElementById(id);
+
+            if (menu.classList.contains('d-none')) {
+
+                menu.classList.remove('d-none');
+
+            } else {
+
+                menu.classList.add('d-none');
+            }
+        }
+
+        const API_BASE = 'http://127.0.0.1:8000/api';
+
+        async function buscarSiniestro() {
+
+            const numeroPoliza =
+                document.getElementById('nro_poliza_buscar').value;
+
+            const token =
+                sessionStorage.getItem('access_token');
+
+            if (!numeroPoliza)
+                return alert("Por favor ingrese un número de póliza");
+
+            if (!token)
+                return alert("No hay sesión activa. Por favor inicie sesión.");
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/polizas-coberturas/${numeroPoliza}`,
+                    {
+                        method: 'GET',
+
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok)
+                    throw new Error("Póliza no encontrada");
+
+                const data = await response.json();
+
+                mostrarDatos(data);
+
+                cargarReporteSiniestros(numeroPoliza, token);
+
+            } catch (error) {
+
+                alert(error.message);
+            }
+        }
+
+        async function cargarReporteSiniestros(nroPoliza, token) {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/siniestros-poliza/${nroPoliza}`,
+                    {
+                        method: 'GET',
+
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.ok) {
+
+                    const siniestros = await response.json();
+
+                    const tbody =
+                        document.getElementById('tablaReporte');
+
+                    tbody.innerHTML = siniestros.map(s => `
+
+                        <tr>
+
+                            <td>
+                                ${s.fecha_siniestro}
+                            </td>
+
+                            <td>
+                                ${s.descripcion}
+                            </td>
+
+                            <td>
+                                ${s.monto_reclamado}
+                            </td>
+
+                            <td>
+
+                                <select
+                                    onchange="actualizarEstadoSiniestro(
+                                        ${s.id_siniestro},
+                                        this.value,
+                                        '${nroPoliza}'
+                                    )"
+
+                                    class="form-select form-select-sm">
+
+                                    <option value="0"
+                                        ${s.aprobado == 0 ? 'selected' : ''}>
+
+                                        Reclamado
+
+                                    </option>
+
+                                    <option value="1"
+                                        ${s.aprobado == 1 ? 'selected' : ''}>
+
+                                        En Proceso
+
+                                    </option>
+
+                                    <option value="2"
+                                        ${s.aprobado == 2 ? 'selected' : ''}>
+
+                                        Aprobado
+
+                                    </option>
+
+                                    <option value="3"
+                                        ${s.aprobado == 3 ? 'selected' : ''}>
+
+                                        Rechazado
+
+                                    </option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                    `).join('');
+
+                    document.getElementById('divReporte').style.display =
+                        'block';
+                }
+
+            } catch (error) {
+
+                console.error("Error al cargar reporte:", error);
+            }
+        }
+
+        async function actualizarEstadoSiniestro(
+            idSiniestro,
+            nuevoEstado,
+            nroPoliza
+        ) {
+
+            const token =
+                sessionStorage.getItem('access_token');
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/siniestro/${idSiniestro}/estado`,
+                    {
+                        method: 'PUT',
+
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+
+                        body: JSON.stringify({
+                            aprobado: parseInt(nuevoEstado, 10)
+                        })
+                    }
+                );
+
+                if (response.ok) {
+
+                    alert("Estado actualizado correctamente");
+
+                    cargarReporteSiniestros(nroPoliza, token);
+
+                } else {
+
+                    console.error(
+                        "Error del servidor:",
+                        await response.text()
+                    );
+
+                    alert("Error al actualizar el estado");
+                }
+
+            } catch (error) {
+
+                console.error("Error en la actualización:", error);
+            }
+        }
+
+        function mostrarDatos(data) {
+
+            const primero = data[0];
+
+            document.getElementById('txtNombre').innerText =
+                primero.nombre;
+
+            document.getElementById('txtApellido').innerText =
+                primero.apellido;
+
+            document.getElementById('txtPoliza').innerText =
+                primero.numero_poliza;
+
+            document.getElementById('infoCliente').style.display =
+                'block';
+
+            document.getElementById('tablaCoberturas').innerHTML =
+                data.map(c => `
+
+                    <tr>
+
+                        <td>
+                            ${c.id_cobertura}
+                        </td>
+
+                        <td>
+                            ${c.nombrecobertura}
+                        </td>
+
+                        <td>
+
+                            <button
+                                onclick="prepararSiniestro(
+                                    ${c.id_poliza},
+                                    '${c.numero_poliza}',
+                                    ${c.id_cobertura},
+                                    '${c.nombrecobertura}'
+                                )"
+
+                                class="btn btn-sm btn-warning">
+
+                                Registrar Siniestro
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                `).join('');
+        }
+
+        function prepararSiniestro(
+            id_p,
+            nro_p,
+            id_c,
+            nom_c
+        ) {
+
+            document.getElementById('reg_id_poliza').value =
+                id_p;
+
+            document.getElementById('reg_numero_poliza').value =
+                nro_p;
+
+            document.getElementById('reg_id_cobertura').value =
+                id_c;
+
+            document.getElementById('reg_nombre_cobertura').value =
+                nom_c;
+
+            document.getElementById('divRegistro').style.display =
+                'block';
+        }
+
+        async function enviarSiniestro() {
+
+            const token =
+                sessionStorage.getItem('access_token');
+
+            const nroPoliza =
+                document.getElementById('reg_numero_poliza').value;
+
+            const data = {
+
+                id_poliza:
+                    document.getElementById('reg_id_poliza').value,
+
+                numero_poliza:
+                    nroPoliza,
+
+                id_cobertura:
+                    document.getElementById('reg_id_cobertura').value,
+
+                nombre:
+                    document.getElementById('reg_nombre_cobertura').value,
+
+                fecha_siniestro:
+                    document.getElementById('reg_fecha').value,
+
+                descripcion:
+                    document.getElementById('reg_descripcion').value,
+
+                monto_reclamado:
+                    document.getElementById('reg_monto').value,
+
+                aprobado: 0
+            };
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE}/siniestros`,
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+
+                        body: JSON.stringify(data)
+                    }
+                );
+
+                if (response.ok) {
+
+                    alert("Siniestro registrado correctamente");
+
+                    document.getElementById('divRegistro').style.display =
+                        'none';
+
+                    cargarReporteSiniestros(nroPoliza, token);
+
+                } else {
+
+                    alert("Error al registrar el siniestro");
+                }
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        }
+
+        function cancelarRegistro() {
+
+            document.getElementById('divRegistro').style.display =
+                'none';
+        }
+
+    </script>
+
+</body>
+</html>
